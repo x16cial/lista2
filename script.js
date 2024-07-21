@@ -82,32 +82,22 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }
 
-    downloadLink.addEventListener('click', function () {
-        // Obtener tareas desde localStorage
-        const tasksToDownload = JSON.parse(localStorage.getItem('tasks')) || [];
+downloadLink.addEventListener('click', function () {
+    // ... (obtener tareas desde localStorage)
 
-        // Convertir las tareas a una cadena de consulta
-        const queryString = tasksToDownload.map(task => {
-            return `tarea[]=${encodeURIComponent(task.text)}&color[]=${encodeURIComponent(task.color)}`;
-        }).join('&');
+    const queryString = tasksToDownload.map(task => {
+        return `tarea[]=${encodeURIComponent(task.text)}&color[]=${encodeURIComponent(task.color)}`;
+    }).join('&');
 
-        // Enviar solicitud GET con la cadena de consulta
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', `descargar_tareas.php?${queryString}`);
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                const url = URL.createObjectURL(xhr.response);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'lista_tareas.txt';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            } else {
-                alert('Error al descargar la lista de tareas.');
-            }
-        };
-        xhr.send(); 
-    });
+    const downloadUrl = `/api/descargar_tareas?${queryString}`; // Usar la ruta /api
+
+    // Crear un enlace temporal y hacer clic en él
+    const a = document.createElement('a');
+    a.href = downloadUrl;
+    a.download = 'lista_tareas.txt';
+    a.style.display = 'none'; // Ocultar el enlace
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 });
+
