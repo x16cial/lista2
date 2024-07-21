@@ -19,8 +19,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (taskText) {
             addTask(taskText, taskColor, taskPriority);
             taskInput.value = '';
-            colorPicker.value = '#CC66FF'; // Reset color picker
-            prioritySelect.value = 'baja'; // Reset priority select
+            colorPicker.value = '#CC66FF'; 
+            prioritySelect.value = 'baja'; 
         } else {
             alert('Por favor, ingresa una tarea.');
         }
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const tasks = Array.from(taskList.children).map(li => ({
             text: li.querySelector('.task-text').textContent,
             color: li.querySelector('.task-text').style.backgroundColor,
-            priority: li.classList[0] // Get the priority class
+            priority: li.classList[0] 
         }));
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }
@@ -83,14 +83,17 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     downloadLink.addEventListener('click', function () {
-        // Crear una copia de las tareas para la descarga
-        const tasksToDownload = JSON.parse(localStorage.getItem('tasks')) || []; 
+        // Obtener tareas desde localStorage
+        const tasksToDownload = JSON.parse(localStorage.getItem('tasks')) || [];
 
-        // Enviar datos por AJAX (método POST)
+        // Convertir las tareas a una cadena de consulta
+        const queryString = tasksToDownload.map(task => {
+            return `tarea[]=${encodeURIComponent(task.text)}&color[]=${encodeURIComponent(task.color)}`;
+        }).join('&');
+
+        // Enviar solicitud GET con la cadena de consulta
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'descargar_tareas.php');
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.responseType = 'blob';
+        xhr.open('GET', `descargar_tareas.php?${queryString}`);
         xhr.onload = function () {
             if (xhr.status === 200) {
                 const url = URL.createObjectURL(xhr.response);
@@ -105,8 +108,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert('Error al descargar la lista de tareas.');
             }
         };
-
-        // Enviar datos en formato JSON
-        xhr.send(JSON.stringify(tasksToDownload));
+        xhr.send(); 
     });
 });
