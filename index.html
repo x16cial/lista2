@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Tareas Personalizada</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="container text-center">
+        <h1>Lista de Tareas o de compras</h1>
+        <p>Crea tu lista personalizada con colores y prioridades. ¡Organízate de forma fácil y divertida!</p>
+    </header>
+
+    <main class="container text-center">
+        <form id="task-form">
+            <label for="task-input">Nueva tarea:</label>
+            <input type="text" id="task-input" placeholder="Agregar nueva tarea">
+
+            <label for="color-picker">Color:</label>
+            <input type="color" id="color-picker" value="#CC66FF">
+
+            <label for="priority-select">Prioridad:</label>
+            <select id="priority-select">
+                <option value="baja">Baja</option>
+                <option value="media">Media</option>
+                <option value="alta">Alta</option>
+            </select>
+
+            <button type="submit">Agregar</button>
+            <a id="download-link" href="#">Descargar Lista de Tareas</a>
+        </form>
+
+        <ul id="task-list"></ul>
+    </main>
+
+    <footer class="container text-center">
+        <p>Desarrollado por: Jesús Mariño, Jorge Hernández, Marian Rivero, Andrés López, Antonio Gómez</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
