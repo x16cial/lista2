@@ -82,33 +82,39 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }
 
-    downloadLink.addEventListener('click', function () {
-        const tasksToDownload = tasks.map(task => ({
-            tarea: task.text,
-            color: task.color
-        }));
+downloadLink.addEventListener('click', function () {
+    const tasksToDownload = tasks.map(task => ({
+        tarea: task.text,
+        color: task.color
+    }));
 
-        // Enviar datos por AJAX (método POST)
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'descargar_tareas.php');
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.responseType = 'blob';
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                const url = URL.createObjectURL(xhr.response);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'lista_tareas.txt';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            } else {
-                alert('Error al descargar la lista de tareas.');
-            }
-        };
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'descargar_tareas.php');
+    xhr.setRequestHeader('Content-Type', 'application/json');
 
-        // Enviar datos en formato JSON
-        xhr.send(JSON.stringify(tasksToDownload));
-    });
+    // NO usamos responseType = 'blob' aquí
+
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            // Obtener el nombre del archivo de la respuesta del servidor
+            const filename = xhr.getResponseHeader('Content-Disposition').split('filename=')[1];
+
+            // Crear un blob a partir de la respuesta de texto
+            const blob = new Blob([xhr.responseText], { type: 'text/plain' });
+
+            // Crear un enlace de descarga
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename || 'lista_tareas.txt';  // Usar el nombre de archivo proporcionado por el servidor
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } else {
+            alert('Error al descargar la lista de tareas.');
+        }
+    };
+
+    xhr.send(JSON.stringify(tasksToDownload));
 });
