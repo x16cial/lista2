@@ -2,19 +2,18 @@
 header('Content-Type: text/plain');
 header('Content-Disposition: attachment; filename="lista_tareas.txt"');
 
-// Obtener tareas desde el cuerpo de la solicitud POST
-$tareas = json_decode(file_get_contents('php://input'), true);
+// Obtener tareas desde la cadena de consulta GET
+$tareas = array_map(null, $_GET['tarea'], $_GET['color']); // Combina 'tarea' y 'color' en un array
 
-// Validar datos
-if (!is_array($tareas)) {
-    die("Error: Datos inválidos para generar la lista de tareas.");
+// Validar datos (ajustado para GET)
+if (empty($tareas)) {
+    die("Error: No se encontraron tareas para descargar.");
 }
 
-// Imprimir las tareas
+// Imprimir las tareas (resto del código igual)
 foreach ($tareas as $tarea) {
-    // Escapar datos para prevenir inyección de código
-    $tareaEscapada = htmlspecialchars($tarea['tarea'], ENT_QUOTES, 'UTF-8');
-    $colorEscapado = htmlspecialchars($tarea['color'], ENT_QUOTES, 'UTF-8');
+    $tareaEscapada = htmlspecialchars($tarea[0], ENT_QUOTES, 'UTF-8'); // Índice 0 para 'tarea'
+    $colorEscapado = htmlspecialchars($tarea[1], ENT_QUOTES, 'UTF-8'); // Índice 1 para 'color'
 
     echo $tareaEscapada . " - " . $colorEscapado . "\n";
 }
